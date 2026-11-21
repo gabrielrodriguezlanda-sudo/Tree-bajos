@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decoraciones - Tree-bajos</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+    <header class="encabezado-decoraciones">
+        <h1>Decoraciones de madera</h1>
+        <p>
+            Descubre nuestros productos elaborados en madera,
+            ideales para tu hogar o para regalar.
+        </p>
+    </header>
+
+    <main class="catalogo-decoraciones">
+
+        <section class="producto-decoracion">
+            <img src="imagenes/servilletero.jpg" alt="Servilletero de madera">
+            <h2>Servilletero</h2>
+            <p>Servilletero elaborado en madera, ideal para organizar las servilletas y decorar tu mesa.</p>
+            <h3>$85 MXN</h3>
+
+            <label for="cantidad1">Cantidad:</label>
+            <input type="number" id="cantidad1" min="1" value="1">
+
+            <button class="boton-agregar"
+                onclick="agregarAlCarrito('Servilletero', 85, 'cantidad1')">
+                Agregar al carrito
+            </button>
+        </section>
+
+        <section class="producto-decoracion">
+            <img src="imagenes/utensilios.jpg" alt="Utensilios de cocina de madera">
+            <h2>Utensilios de cocina</h2>
+            <p>Conjunto de utensilios de madera para preparar y servir alimentos.</p>
+            <h3>$150 MXN</h3>
+
+            <label for="cantidad2">Cantidad:</label>
+            <input type="number" id="cantidad2" min="1" value="1">
+
+            <button class="boton-agregar"
+                onclick="agregarAlCarrito('Utensilios de cocina', 150, 'cantidad2')">
+                Agregar al carrito
+            </button>
+        </section>
+
+        <section class="producto-decoracion">
+            <img src="imagenes/juguetes.jpg" alt="Juguetes de madera">
+            <h2>Juguetes</h2>
+            <p>Juguetes artesanales de madera con diseños creativos.</p>
+            <h3>$120 MXN</h3>
+
+            <label for="cantidad3">Cantidad:</label>
+            <input type="number" id="cantidad3" min="1" value="1">
+
+            <button class="boton-agregar"
+                onclick="agregarAlCarrito('Juguetes', 120, 'cantidad3')">
+                Agregar al carrito
+            </button>
+        </section>
+
+        <section class="producto-decoracion">
+            <img src="imagenes/marcos.jpg" alt="Marcos de fotos de madera">
+            <h2>Marcos de fotos</h2>
+            <p>Marcos de madera para colocar tus fotografías favoritas.</p>
+            <h3>$100 MXN</h3>
+
+            <label for="cantidad4">Cantidad:</label>
+            <input type="number" id="cantidad4" min="1" value="1">
+
+            <button class="boton-agregar"
+                onclick="agregarAlCarrito('Marcos de fotos', 100, 'cantidad4')">
+                Agregar al carrito
+            </button>
+        </section>
+
+        <section class="producto-decoracion">
+            <img src="imagenes/pequenas_decoraciones.jpg" alt="Pequeñas decoraciones de madera">
+            <h2>Pequeñas decoraciones</h2>
+            <p>Adornos de madera para decorar habitaciones y diferentes espacios.</p>
+            <h3>$70 MXN</h3>
+
+            <label for="cantidad5">Cantidad:</label>
+            <input type="number" id="cantidad5" min="1" value="1">
+
+            <button class="boton-agregar"
+                onclick="agregarAlCarrito('Pequeñas decoraciones', 70, 'cantidad5')">
+                Agregar al carrito
+            </button>
+        </section>
+
+        <section class="producto-decoracion">
+            <img src="imagenes/cajas.jpg" alt="Cajas de madera">
+            <h2>Cajas de madera</h2>
+            <p>Cajas elaboradas en madera, ideales para guardar objetos o entregar regalos.</p>
+            <h3>$130 MXN</h3>
+
+            <label for="cantidad6">Cantidad:</label>
+            <input type="number" id="cantidad6" min="1" value="1">
+
+            <button class="boton-agregar"
+                onclick="agregarAlCarrito('Cajas de madera', 130, 'cantidad6')">
+                Agregar al carrito
+            </button>
+        </section>
+
+    </main>
+
+    <!-- CARRITO DE COMPRAS -->
+    <section class="carrito">
+        <h2>🛒 Mi carrito de compras</h2>
+
+        <div id="lista-carrito">
+            <p>Tu carrito está vacío.</p>
+        </div>
+
+        <h3 id="total-carrito">Total: $0 MXN</h3>
+
+        <button class="boton-vaciar" onclick="vaciarCarrito()">
+            Vaciar carrito
+        </button>
+        <a href="finalizar-pedido.html" class="boton-finalizar">
+    Continuar con mi pedido
+</a>
+    </section>
+
+    <footer class="pie-decoraciones">
+        <a href="pedidos.html" class="boton-regresar">
+            Regresar a pedidos
+        </a>
+
+        <a href="inicio.html" class="boton-regresar">
+            Regresar al inicio
+        </a>
+    </footer>
+
+    <script>
+        let carrito = JSON.parse(localStorage.getItem("carritoDecoraciones")) || [];
+
+        function guardarCarrito() {
+            localStorage.setItem("carritoDecoraciones", JSON.stringify(carrito));
+        }
+
+        function agregarAlCarrito(nombre, precio, idCantidad) {
+            let cantidad = parseInt(document.getElementById(idCantidad).value);
+
+            if (isNaN(cantidad) || cantidad < 1) {
+                alert("Por favor, selecciona una cantidad válida.");
+                return;
+            }
+
+            let productoExistente = carrito.find(
+                producto => producto.nombre === nombre
+            );
+
+            if (productoExistente) {
+                productoExistente.cantidad += cantidad;
+            } else {
+                carrito.push({
+                    nombre: nombre,
+                    precio: precio,
+                    cantidad: cantidad
+                });
+            }
+
+            guardarCarrito();
+            mostrarCarrito();
+
+            alert("Producto agregado al carrito.");
+        }
+
+        function mostrarCarrito() {
+            let lista = document.getElementById("lista-carrito");
+            let totalElemento = document.getElementById("total-carrito");
+
+            lista.innerHTML = "";
+            let total = 0;
+
+            if (carrito.length === 0) {
+                lista.innerHTML = "<p>Tu carrito está vacío.</p>";
+            }
+
+            carrito.forEach((producto, indice) => {
+                let subtotal = producto.precio * producto.cantidad;
+                total += subtotal;
+
+                let elemento = document.createElement("div");
+                elemento.className = "elemento-carrito";
+
+                let descripcion = document.createElement("span");
+                descripcion.textContent =
+                    producto.nombre + " - " + producto.cantidad +
+                    " pieza(s) - $" + subtotal + " MXN";
+
+                let boton = document.createElement("button");
+                boton.textContent = "Eliminar";
+                boton.className = "boton-eliminar";
+                boton.onclick = function() {
+                    eliminarProducto(indice);
+                };
+
+                elemento.appendChild(descripcion);
+                elemento.appendChild(boton);
+                lista.appendChild(elemento);
+            });
+
+            totalElemento.textContent = "Total: $" + total + " MXN";
+        }
+
+        function eliminarProducto(indice) {
+            carrito.splice(indice, 1);
+            guardarCarrito();
+            mostrarCarrito();
+        }
+
+        function vaciarCarrito() {
+            carrito = [];
+            guardarCarrito();
+            mostrarCarrito();
+        }
+
+        mostrarCarrito();
+    </script>
+
+</body>
+</html>

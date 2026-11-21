@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar pedido - Tree-bajos</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+    <header class="encabezado-finalizar">
+        <h1>Confirmación de pedido</h1>
+        <p>Revisa tu compra antes de continuar.</p>
+    </header>
+
+    <main class="contenedor-finalizar">
+
+        <section class="resumen-compra">
+            <h2>Resumen de tu compra</h2>
+
+            <div id="productos-confirmacion">
+                <p>Cargando productos...</p>
+            </div>
+
+            <h3 id="total-confirmacion">Total: $0 MXN</h3>
+        </section>
+
+        <section class="confirmar-compra">
+            <h2>¿Todo está correcto?</h2>
+            <p>
+                Verifica los productos, las cantidades y el total
+                de tu compra antes de confirmar.
+            </p>
+
+            <form id="formulario-pedido">
+
+                <label for="metodo-pago">Selecciona tu método de pago:</label>
+
+                <select id="metodo-pago" required>
+                    <option value="">Selecciona una opción</option>
+                    <option value="Efectivo al recibir">
+                        Efectivo al recibir
+                    </option>
+                    <option value="Transferencia bancaria">
+                        Transferencia bancaria
+                    </option>
+                    <option value="Pago en el establecimiento">
+                        Pago en el establecimiento
+                    </option>
+                </select>
+
+                <p class="aviso-pago">
+                    Esta es una demostración. La selección del método
+                    de pago no realiza ningún cobro.
+                </p>
+
+                <button type="submit" class="boton-confirmar">
+                    Confirmar mi pedido
+                </button>
+
+            </form>
+
+            <a href="pedidos.html" class="boton-regresar">
+                Regresar a los pedidos
+            </a>
+        </section>
+
+    </main>
+
+    <script>
+        // Recuperar los productos de ambos carritos
+        let decoraciones = JSON.parse(
+            localStorage.getItem("carritoDecoraciones")
+        ) || [];
+
+        let muebles = JSON.parse(
+            localStorage.getItem("carritoMuebles")
+        ) || [];
+
+        // Unir los productos en una sola lista
+        let todosLosProductos = [...decoraciones, ...muebles];
+
+        let totalCompra = 0;
+
+        function mostrarResumen() {
+            let contenedor = document.getElementById(
+                "productos-confirmacion"
+            );
+
+            let totalElemento = document.getElementById(
+                "total-confirmacion"
+            );
+
+            contenedor.innerHTML = "";
+            totalCompra = 0;
+
+            if (todosLosProductos.length === 0) {
+                contenedor.innerHTML =
+                    "<p>No has agregado productos a tu carrito.</p>";
+
+                document.getElementById("formulario-pedido")
+                    .querySelector("button").disabled = true;
+
+                totalElemento.textContent = "Total: $0 MXN";
+                return;
+            }
+
+            todosLosProductos.forEach(function(producto) {
+                let subtotal = producto.precio * producto.cantidad;
+                totalCompra += subtotal;
+
+                let elemento = document.createElement("div");
+                elemento.className = "producto-confirmacion";
+
+                let nombre = document.createElement("strong");
+                nombre.textContent = producto.nombre;
+
+                let detalle = document.createElement("p");
+                detalle.textContent =
+                    "Cantidad: " + producto.cantidad +
+                    " | Precio unitario: $" + producto.precio + " MXN" +
+                    " | Subtotal: $" + subtotal + " MXN";
+
+                elemento.appendChild(nombre);
+                elemento.appendChild(detalle);
+                contenedor.appendChild(elemento);
+            });
+
+            totalElemento.textContent =
+                "Total: $" + totalCompra + " MXN";
+        }
+
+        // Confirmar pedido
+        document.getElementById("formulario-pedido")
+            .addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+                if (todosLosProductos.length === 0) {
+                    alert("Tu carrito está vacío.");
+                    return;
+                }
+
+                let metodo = document.getElementById("metodo-pago").value;
+
+                if (metodo === "") {
+                    alert("Por favor, selecciona un método de pago.");
+                    return;
+                }
+
+                let pedido = {
+                    productos: todosLosProductos,
+                    total: totalCompra,
+                    metodoPago: metodo
+                };
+
+                // Guardar el resumen para la página de agradecimiento
+                localStorage.setItem(
+                    "ultimoPedido",
+                    JSON.stringify(pedido)
+                );
+
+                // Vaciar los dos carritos
+                localStorage.removeItem("carritoDecoraciones");
+                localStorage.removeItem("carritoMuebles");
+
+                // Ir a la página final
+                window.location.href = "gracias.html";
+            });
+
+        mostrarResumen();
+    </script>
+
+</body>
+</html>
